@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REDEUS'26 - Book Your Ticket</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z'/><path d='M13 5v2'/><path d='M13 17v2'/><path d='M13 11v2'/></svg>">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#050e07;--bg-deep:#030704;--bg-card:rgba(6,16,8,0.90);--gold:#d4af37;--gold-sec:#c9a84c;--gold-dark:#b8942e;--text:#f0e6d0;--text-muted:#859676;--input-bg:rgba(3,10,5,0.85);--input-border:rgba(201,168,76,0.35);--error:#e74c3c;--success:#2ecc71}
+    html{scroll-behavior:smooth;overflow-x:hidden!important;max-width:100%!important;width:100%!important}
+    body{min-height:100vh;background:radial-gradient(ellipse 65% 45% at 15% 10%,rgba(162,156,119,0.13) 0%,transparent 55%),radial-gradient(ellipse 70% 60% at 50% 25%,#0b2011 0%,#050e07 65%,#030704 100%);font-family:'Inter',sans-serif;color:var(--text);line-height:1.6;overflow-x:hidden;max-width:100%;width:100%;position:relative}
+    ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:var(--bg-deep)}::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:4px}
+    .light-rays{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;background:radial-gradient(ellipse at 15% 10%,rgba(212,175,55,0.05) 0%,transparent 45%),radial-gradient(ellipse at 35% 8%,rgba(255,245,200,0.025) 0%,transparent 35%);pointer-events:none;z-index:0;animation:rayPulse 8s ease-in-out infinite}
+    @keyframes rayPulse{0%,100%{opacity:.5}50%{opacity:.8}}
+    .hero{text-align:center;padding:40px 20px 15px;position:relative;z-index:1;overflow:hidden;max-width:100%}
+    .college-name{font-family:'Cinzel',serif;letter-spacing:2px;font-size:.75rem;color:var(--gold-sec);text-transform:uppercase;line-height:1.5}
+    .presents{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:5px;color:var(--text-muted);margin:8px 0 5px}
+    /* ========================== */
+    /* HERO TITLE THEME WITH EFFECTS */
+    /* ========================== */
+    .title-stage {
+      position: relative;
+      max-width: 720px;
+      width: 96%;
+      margin: 12px auto 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1000px;
+    }
+
+    .hero-halo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 92%;
+      height: 85%;
+      background: radial-gradient(ellipse at 50% 50%, rgba(12, 36, 16, 0.55) 0%, rgba(212, 175, 55, 0.08) 45%, transparent 75%);
+      filter: blur(40px);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: haloPulse 5s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+    @keyframes haloPulse {
+      0% { transform: translate(-50%, -50%) scale(0.94); opacity: 0.4; }
+      100% { transform: translate(-50%, -50%) scale(1.06); opacity: 0.75; }
+    }
+
+    /* Volumetric light rays matching the artwork */
+    .god-ray {
+      position: absolute;
+      pointer-events: none;
+      top: -90px;
+      left: -20%;
+      width: 140%;
+      height: 300px;
+      background: linear-gradient(135deg, rgba(255, 245, 190, 0.18) 0%, rgba(212, 175, 55, 0.08) 35%, transparent 70%);
+      filter: blur(16px);
+      z-index: 1;
+      animation: rayBreathe 6s ease-in-out infinite alternate;
+    }
+    .ray-1 { clip-path: polygon(10% 0%, 25% 0%, 68% 100%, 42% 100%); }
+    .ray-2 { clip-path: polygon(26% 0%, 40% 0%, 92% 100%, 66% 100%); animation-duration: 8s; animation-delay: -2.5s; opacity: 0.65; }
+    .ray-3 { clip-path: polygon(0% 0%, 15% 0%, 45% 100%, 22% 100%); animation-duration: 7s; animation-delay: -4s; opacity: 0.45; }
+    @keyframes rayBreathe {
+      0% { opacity: 0.35; transform: rotate(-1.5deg) scale(0.98); }
+      100% { opacity: 0.85; transform: rotate(1.5deg) scale(1.02); }
+    }
+
+    /* Title card container */
+    .title-card-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      z-index: 2;
+      transition: transform 0.25s cubic-bezier(0.2, 0, 0.2, 1), filter 0.3s ease;
+      transform-style: preserve-3d;
+    }
+
+    .hero-title-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 16px;
+      filter: drop-shadow(0 14px 40px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 30px rgba(212, 175, 55, 0.25));
+      mask-image: radial-gradient(ellipse 96% 92% at 50% 50%, black 75%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 96% 92% at 50% 50%, black 75%, transparent 100%);
+    }
+
+    /* Specular light sweep shimmer */
+    .title-shimmer {
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .title-shimmer::after {
+      content: '';
+      position: absolute;
+      top: -60%;
+      left: -140%;
+      width: 70%;
+      height: 220%;
+      background: linear-gradient(
+        110deg,
+        transparent 20%,
+        rgba(212, 175, 55, 0.12) 38%,
+        rgba(255, 252, 220, 0.55) 50%,
+        rgba(212, 175, 55, 0.18) 62%,
+        transparent 80%
+      );
+      transform: rotate(25deg);
+      animation: lightSweep 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    @keyframes lightSweep {
+      0%, 35% { left: -140%; opacity: 0; }
+      40% { opacity: 1; }
+      65% { left: 160%; opacity: 1; }
+      70%, 100% { left: 160%; opacity: 0; }
+    }
+
+    /* Animated gold sparkle stars on letters */
+    .sparkle {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      pointer-events: none;
+      background: radial-gradient(circle, #ffffff 15%, rgba(255, 240, 180, 0.9) 35%, transparent 70%);
+      border-radius: 50%;
+      filter: drop-shadow(0 0 8px rgba(255, 220, 100, 1));
+      animation: sparkleTwinkle 4s ease-in-out infinite;
+    }
+    .sparkle::before, .sparkle::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(to right, transparent, #ffffff, transparent);
+      box-shadow: 0 0 6px rgba(255, 215, 0, 0.8);
+    }
+    .sparkle::before { width: 22px; height: 2px; }
+    .sparkle::after { width: 2px; height: 22px; }
+
+    .sparkle-1 { top: 38%; left: 18%; animation-delay: 0.4s; }
+    .sparkle-2 { top: 32%; left: 52%; animation-delay: 2.2s; }
+    .sparkle-3 { top: 39%; right: 15%; animation-delay: 3.4s; }
+
+    @keyframes sparkleTwinkle {
+      0%, 75%, 100% { transform: scale(0) rotate(0deg); opacity: 0; }
+      80% { transform: scale(1.4) rotate(45deg); opacity: 1; }
+      86% { transform: scale(0.9) rotate(90deg); opacity: 0.85; }
+      92% { transform: scale(0.2) rotate(135deg); opacity: 0.2; }
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .diamond-divider{color:var(--gold);font-size:.7rem;margin-top:15px;opacity:.6}
+    .event-info{padding:10px 20px;position:relative;z-index:1}
+    .info-badges{display:flex;justify-content:center;gap:15px;flex-wrap:wrap;max-width:500px;margin:0 auto}
+    .info-badge{background:var(--bg-card);border:1px solid var(--input-border);border-radius:20px;padding:6px 14px;font-size:.78rem;display:flex;align-items:center;gap:6px;backdrop-filter:blur(10px)}
+    .section-title{font-family:'Cinzel',serif;color:var(--gold);text-align:center;font-size:1.1rem;margin-bottom:15px;letter-spacing:1px}
+    .bank-details{max-width:500px;margin:15px auto;padding:0 20px;position:relative;z-index:1}
+    .bank-card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--input-border);border-radius:12px;padding:18px 20px;animation:fadeInUp .6s ease}
+    .bank-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .bank-row:last-child{border-bottom:none}
+    .bank-label{font-size:.82rem;color:var(--text-muted)}
+    .bank-value{font-weight:600;font-size:.9rem;text-align:right}
+    .price-row .bank-value{color:var(--gold);font-size:1.1rem;font-weight:700}
+    .bank-note{text-align:center;font-size:.8rem;color:var(--text-muted);margin-top:12px}
+    .booking-section{position:relative;z-index:1;padding:10px 20px 30px}
+    .form-card{max-width:540px;margin:0 auto;background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:25px 22px;box-shadow:0 8px 32px rgba(0,0,0,0.3);animation:fadeInUp .6s ease .1s both}
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;font-size:.82rem;font-weight:500;color:var(--gold-sec);margin-bottom:6px;letter-spacing:.5px}
+    .required{color:var(--error)}.optional{color:var(--text-muted);font-weight:300;font-size:.75rem}
+    input,select{width:100%;padding:12px 16px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:var(--text);font-size:.95rem;font-family:'Inter',sans-serif;transition:all .3s;outline:none}
+    input:focus,select:focus{border-color:rgba(212,175,55,0.8);box-shadow:0 0 15px rgba(212,175,55,0.15)}
+    input::placeholder{color:#5a6a4a}
+    select option{background:#0a1f0a;color:var(--text)}
+
+    /* Enhanced validation error states */
+    input.input-error, select.input-error {
+      border-color: #e74c3c !important;
+      background: rgba(45, 10, 10, 0.85) !important;
+      box-shadow: 0 0 14px rgba(231, 76, 60, 0.45) !important;
+      animation: shakeInput 0.35s ease-in-out;
+    }
+    @keyframes shakeInput {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+    .field-error {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .78rem;
+      color: #ff6b6b;
+      margin-top: 5px;
+      font-weight: 500;
+      min-height: 1.2em;
+    }
+    .field-error:empty { display: none; }
+    .attendee-card.has-error {
+      border-color: rgba(231, 76, 60, 0.8) !important;
+      box-shadow: 0 0 18px rgba(231, 76, 60, 0.25) !important;
+    }
+    .attendee-card.has-error .attendee-header {
+      background: rgba(65, 15, 15, 0.6) !important;
+      border-bottom-color: rgba(231, 76, 60, 0.45) !important;
+    }
+    .card-error-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 9px;
+      background: rgba(231, 76, 60, 0.25);
+      border: 1px solid rgba(231, 76, 60, 0.65);
+      border-radius: 12px;
+      color: #ff8585;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-left: auto;
+      margin-right: 10px;
+    }
+    .upload-area.upload-error {
+      border-color: #e74c3c !important;
+      background: rgba(45, 10, 10, 0.45) !important;
+      box-shadow: 0 0 18px rgba(231, 76, 60, 0.35) !important;
+      animation: shakeInput 0.35s ease-in-out;
+    }
+
+    /* ========================== */
+    /* TICKET COUNTER WIDGET      */
+    /* ========================== */
+    .counter-section{margin-bottom:24px}
+    .counter-label{font-family:'Cinzel',serif;color:var(--gold);text-align:center;font-size:.95rem;letter-spacing:2px;margin-bottom:14px;text-transform:uppercase}
+    .counter-widget{display:flex;align-items:stretch;max-width:280px;margin:0 auto;border:2px solid var(--gold);border-radius:12px;overflow:hidden;background:var(--input-bg)}
+    .counter-btn{width:80px;background:rgba(8,25,8,0.9);border:none;color:var(--gold);font-size:2rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none}
+    .counter-btn:hover{background:rgba(212,175,55,0.15)}
+    .counter-btn:active{background:rgba(212,175,55,0.3);transform:scale(0.95)}
+    .counter-btn.disabled{opacity:.3;cursor:not-allowed}
+    .counter-btn.disabled:hover{background:rgba(8,25,8,0.9)}
+    .counter-btn.disabled:active{transform:none}
+    .counter-display{flex:1;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:2.2rem;font-weight:700;color:var(--text);background:rgba(212,175,55,0.06);border-left:2px solid var(--gold);border-right:2px solid var(--gold);min-height:72px}
+
+    /* ========================== */
+    /* TOTAL DISPLAY              */
+    /* ========================== */
+    .total-display{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(212,175,55,0.08);border:1px solid var(--input-border);border-radius:8px;margin-bottom:22px}
+    .total-amount{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--gold);font-weight:700}
+
+    /* ========================== */
+    /* RECEIPT UPLOAD              */
+    /* ========================== */
+    .upload-area{border:2px dashed var(--input-border);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:18px}
+    .upload-area:hover{border-color:var(--gold);background:rgba(212,175,55,0.05)}
+    .upload-icon{font-size:2.2rem;margin-bottom:8px}
+    .upload-text{font-weight:500;color:var(--gold);font-size:.95rem}
+    .upload-subtext{font-size:.78rem;color:var(--text-muted);margin-top:4px}
+    .upload-formats{font-size:.7rem;color:#5a6a4a;margin-top:6px}
+    .upload-preview{position:relative;text-align:center;margin-bottom:18px}
+    .upload-preview img{max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--input-border)}
+    .remove-btn{position:absolute;top:-8px;right:-8px;background:rgba(231,76,60,0.9);color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center}
+    .file-name{font-size:.75rem;color:var(--text-muted);margin-top:6px}
+
+    /* ========================== */
+    /* ATTENDEE TICKET CARDS      */
+    /* ========================== */
+    .attendees-container{margin-top:5px}
+    .attendee-card{background:rgba(212,175,55,0.04);border:1px solid rgba(201,168,76,0.25);border-radius:12px;margin-bottom:18px;overflow:hidden;transition:all .3s ease;animation:slideIn .35s ease}
+    @keyframes slideIn{from{opacity:0;transform:translateY(15px);max-height:0}to{opacity:1;transform:translateY(0);max-height:600px}}
+    .attendee-header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:rgba(212,175,55,0.08);border-bottom:1px solid rgba(201,168,76,0.2);cursor:pointer;user-select:none;-webkit-user-select:none}
+    .attendee-header:hover{background:rgba(212,175,55,0.12)}
+    .attendee-title{font-family:'Cinzel',serif;font-size:.88rem;color:var(--gold);display:flex;align-items:center;gap:8px}
+    .attendee-title .ticket-icon{font-size:1.1rem}
+    .attendee-toggle{color:var(--gold-sec);font-size:.85rem;transition:transform .3s}
+    .attendee-toggle.collapsed{transform:rotate(-90deg)}
+    .attendee-body{padding:16px 18px}
+    .attendee-body.collapsed{display:none}
+    .attendee-body .form-group{margin-bottom:14px}
+    .attendee-body .form-group:last-child{margin-bottom:4px}
+    .attendee-name-preview{font-size:.78rem;color:var(--text-muted);font-style:italic;margin-left:auto;margin-right:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+    /* ========================== */
+    /* BUTTONS                    */
+    /* ========================== */
+    .submit-btn{width:100%;padding:14px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold-dark),var(--gold),#f0d060,var(--gold),var(--gold-dark));color:#0a1f0a;font-family:'Cinzel',serif;font-weight:700;font-size:1rem;letter-spacing:2px;cursor:pointer;transition:all .3s;margin-top:8px}
+    .submit-btn:hover{transform:scale(1.02);box-shadow:0 4px 20px rgba(212,175,55,0.4)}
+    .submit-btn:active{transform:scale(.98)}
+    .submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .btn-loading{display:inline-flex;align-items:center;gap:8px}
+    .spinner-small{width:16px;height:16px;border:2px solid #0a1f0a;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .success-state{display:none;text-align:center;padding:40px 20px;animation:fadeInUp .5s ease;position:relative;z-index:1}
+    .success-state.visible{display:block}
+    .success-checkmark{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#2ecc71,#27ae60);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2.5rem;color:#fff;animation:scaleIn .5s cubic-bezier(.175,.885,.32,1.275)}
+    @keyframes scaleIn{from{transform:scale(0)}to{transform:scale(1)}}
+    .success-title{font-family:'Cinzel',serif;color:var(--gold);font-size:1.5rem;margin-bottom:12px}
+    .success-message{color:var(--text-muted);max-width:350px;margin:0 auto 20px;font-size:.9rem;line-height:1.7}
+    .success-ref{background:var(--bg-card);border:1px solid var(--input-border);border-radius:8px;padding:12px 20px;display:inline-block;font-family:monospace;font-size:.85rem;color:var(--gold);letter-spacing:1px}
+    /* ========================== */
+    /* PROGRESS TRACKER (STEPPER) */
+    /* ========================== */
+    .progress-tracker {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      max-width: 440px;
+      margin: 26px auto 22px;
+      padding: 20px 16px 14px;
+      background: rgba(6, 18, 8, 0.75);
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      border-radius: 16px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+    .tracker-track {
+      position: absolute;
+      top: 36px;
+      left: 18%;
+      right: 18%;
+      height: 2px;
+      background: rgba(201, 168, 76, 0.18);
+      z-index: 0;
+    }
+    .tracker-progress {
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, #2ecc71, var(--gold));
+      box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+    }
+    .tracker-step {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      max-width: 120px;
+    }
+    .step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      font-size: 1rem;
+      transition: all .3s ease;
+    }
+    .step-done .step-circle {
+      background: linear-gradient(135deg, rgba(46, 204, 113, 0.25), rgba(39, 174, 96, 0.45));
+      border: 1.5px solid #2ecc71;
+      color: #2ecc71;
+      box-shadow: 0 0 12px rgba(46, 204, 113, 0.35);
+    }
+    .step-done .step-label { color: #2ecc71; font-weight: 600; }
+    .step-active .step-circle {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(240, 208, 96, 0.45));
+      border: 1.5px solid var(--gold);
+      color: #f0d060;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.45);
+      animation: pulseGlow 2.4s ease-in-out infinite alternate;
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 8px rgba(212, 175, 55, 0.3); transform: scale(1); }
+      100% { box-shadow: 0 0 18px rgba(240, 208, 96, 0.6); transform: scale(1.06); }
+    }
+    .step-active .step-label { color: var(--gold); font-weight: 600; }
+    .step-pending .step-circle {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(201, 168, 76, 0.2);
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+    .step-pending .step-label { color: var(--text-muted); opacity: 0.65; }
+    .step-label { font-size: 0.76rem; letter-spacing: 0.3px; line-height: 1.3; margin-bottom: 2px; }
+    .step-sub { font-size: 0.64rem; color: var(--text-muted); opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; }
+    .book-another{margin-top:25px;padding:10px 24px;background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:8px;font-family:'Cinzel',serif;cursor:pointer;transition:all .3s}
+    .book-another:hover{background:rgba(212,175,55,0.1)}
+    footer{text-align:center;padding:25px 20px;position:relative;z-index:1;border-top:1px solid rgba(201,168,76,0.1)}
+    .footer-text{font-size:.72rem;color:#5a6a4a}
+    .footer-tagline{font-size:.65rem;color:#3a4a3a;margin-top:4px;font-style:italic}
+    .toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:calc(100vw - 40px)}
+    .toast{background:rgba(10,31,10,0.95);border:1px solid var(--gold);border-radius:8px;padding:12px 18px;font-size:.85rem;backdrop-filter:blur(10px);min-width:240px;max-width:100%;opacity:0;transform:translateY(-12px);transition:all .3s cubic-bezier(0.16,1,0.3,1);pointer-events:auto}
+    .toast.show{opacity:1;transform:translateY(0)}.toast.error{border-color:var(--error)}.toast.success{border-color:var(--success)}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Divider */
+    .form-divider{border:none;border-top:1px solid rgba(201,168,76,0.2);margin:22px 0}
+
+    @media(max-width:500px){
+      html,body{overflow-x:hidden!important;max-width:100%!important;width:100%!important}
+      .hero{padding:25px 12px 10px;overflow:hidden;max-width:100%}
+      .title-stage{width:100%;max-width:100%;margin:8px auto 12px;overflow:hidden}
+      .god-ray{width:100%;left:0}
+      .bank-details,.booking-section{padding:0 12px;max-width:100%}
+      .bank-card{padding:16px 14px;width:100%;max-width:100%}
+      .bank-row{flex-wrap:wrap;gap:4px}
+      .form-card{padding:18px 12px;width:100%;max-width:100%}
+      .info-badges{gap:6px}
+      .info-badge{font-size:.72rem;padding:5px 9px;max-width:100%;word-break:break-word}
+      .counter-widget{max-width:240px}
+      .counter-btn{width:60px;font-size:1.6rem}
+      .counter-display{font-size:1.8rem;min-height:58px}
+      .attendee-body{padding:14px 12px}
+      .toast-container{top:15px;right:15px;left:15px;max-width:calc(100vw - 30px)}
+      .toast{min-width:0;width:100%}
+    }
+    [data-lucide] { display:inline-block; width:1em; height:1em; vertical-align:middle; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  </style>
+</head>
+<body>
+  <div class="light-rays"></div>
+  <div class="toast-container" id="toastContainer"></div>
+
+  <header class="hero" id="heroHeader">
+    <p class="college-name">THE 2023 O/L AND 2026 A/L BATCH OF<br>ST. BENEDICT'S COLLEGE</p>
+    <p class="presents">PROUDLY PRESENTS</p>
+
+    <!-- Official 3D Theme Title Stage with Cinematic Effects -->
+    <div class="title-stage" id="titleStage">
+      <div class="hero-halo"></div>
+      <div class="god-ray ray-1"></div>
+      <div class="god-ray ray-2"></div>
+      <div class="god-ray ray-3"></div>
+
+      <div class="title-card-wrapper" id="titleCard">
+        <img src="redeus-title.png" alt="REDEUS'26 - From the First Day to the Final Bow - The Official Batch Gathering" class="hero-title-img" draggable="false">
+        <div class="title-shimmer"></div>
+        <div class="sparkle sparkle-1"></div>
+        <div class="sparkle sparkle-2"></div>
+        <div class="sparkle sparkle-3"></div>
+      </div>
+
+      <h1 class="visually-hidden">REDEUS'26 - From the First Day to the Final Bow - The Official Batch Gathering</h1>
+    </div>
+
+    <div class="diamond-divider">◆</div>
+  </header>
+
+  <section class="event-info">
+    <div class="info-badges">
+      <div class="info-badge"><span><i data-lucide="calendar"></i></span><span>October 16, 2026</span></div>
+      <div class="info-badge"><span><i data-lucide="clock"></i></span><span>7:00 PM Onwards</span></div>
+      <div class="info-badge"><span><i data-lucide="map-pin"></i></span><span>Waters Edge, Battaramulla</span></div>
+    </div>
+  </section>
+
+  <main class="booking-section" id="bookingSection">
+    <div class="form-card">
+      <h2 class="section-title"><i data-lucide="ticket"></i> Book Your Tickets</h2>
+
+      <div id="bookingForm">
+        <!-- ============ STEP 1: NUMBER OF TICKETS ============ -->
+        <div class="counter-section">
+          <div class="counter-label">No. of Tickets</div>
+          <div class="counter-widget">
+            <button class="counter-btn disabled" id="counterMinus" onclick="changeTicketCount(-1)">−</button>
+            <div class="counter-display" id="counterDisplay">1</div>
+            <button class="counter-btn" id="counterPlus" onclick="changeTicketCount(1)">+</button>
+          </div>
+        </div>
+
+        <!-- Total Amount -->
+        <div class="total-display" id="totalDisplay">
+          <span>Total Amount:</span>
+          <span class="total-amount" id="totalAmount">Rs. 8,000</span>
+        </div>
+
+        <!-- ============ STEP 2: RECEIPT UPLOAD (COMMON) ============ -->
+        <div class="form-group">
+          <label>Upload Bank Receipt <span class="required">*</span> <span class="optional">(Common for all tickets)</span></label>
+          <div class="upload-area" id="uploadArea" onclick="document.getElementById('receiptFile').click()">
+            <div class="upload-icon"><i data-lucide="upload" style="width:2.2rem;height:2.2rem;"></i></div>
+            <p class="upload-text">Tap to Upload Receipt</p>
+            <p class="upload-subtext">or drag & drop</p>
+            <p class="upload-formats">JPG, PNG, PDF (Max 5MB)</p>
+          </div>
+          <input type="file" id="receiptFile" accept="image/*,.pdf,application/pdf" hidden>
+          <div class="upload-preview" id="uploadPreview" style="display:none;">
+            <img id="previewImage" src="" alt="Receipt" style="display:none;">
+            <div id="previewPdf" style="display:none;padding:15px;text-align:center;">
+              <span style="font-size:2.6rem;"><i data-lucide="file-text" style="width:2.6rem;height:2.6rem;"></i></span>
+              <p style="color:var(--gold);font-weight:600;font-size:.9rem;margin-top:6px;">PDF Document Attached</p>
+            </div>
+            <button class="remove-btn" onclick="removeReceipt()"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
+            <p class="file-name" id="fileName"></p>
+          </div>
+          <span class="field-error" id="receiptError"></span>
+        </div>
+
+        <hr class="form-divider">
+
+        <!-- ============ STEP 3: ATTENDEE DETAILS ============ -->
+        <div class="attendees-container" id="attendeesContainer">
+          <!-- Attendee cards are generated dynamically -->
+        </div>
+
+        <!-- Submit -->
+        <button class="submit-btn" id="submitBtn" onclick="submitBooking()">
+          <span class="btn-text" id="btnText">◆ Submit Booking ◆</span>
+          <span class="btn-loading" id="btnLoading" style="display:none;"><span class="spinner-small"></span> Submitting...</span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <div class="success-state" id="successState">
+    <div class="success-checkmark">✓</div>
+    <h2 class="success-title">Booking Received!</h2>
+    <p class="success-message">Our team will review your payment and send your QR code ticket(s) via WhatsApp.</p>
+    <div class="success-ref" id="successRef">REF-XXXXXX</div>
+    <!-- Luxury Progress Stepper -->
+    <div class="progress-tracker">
+      <div class="tracker-track">
+        <div class="tracker-progress"></div>
+      </div>
+
+      <div class="tracker-step step-done">
+        <div class="step-circle">
+          <i data-lucide="circle-check" style="width:1.2rem;height:1.2rem;"></i>
+        </div>
+        <div class="step-label">Payment Sent</div>
+        <div class="step-sub">Received</div>
+      </div>
+
+      <div class="tracker-step step-active">
+        <div class="step-circle">
+          <i data-lucide="search" style="width:1.2rem;height:1.2rem;"></i>
+        </div>
+        <div class="step-label">Under Review</div>
+        <div class="step-sub">In Progress</div>
+      </div>
+
+      <div class="tracker-step step-pending">
+        <div class="step-circle">
+          <i data-lucide="smartphone" style="width:1.2rem;height:1.2rem;"></i>
+        </div>
+        <div class="step-label">QR Pass</div>
+        <div class="step-sub">WhatsApp</div>
+      </div>
+    </div>
+    <button class="book-another" onclick="resetForm()">Book More Tickets</button>
+  </div>
+
+  <footer>
+    <p class="footer-text">REDEUS'26 — The 2023 O/L and 2026 A/L Batch of St. Benedict's College</p>
+    <p class="footer-tagline">"From the First Day to the Final Bow"</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    // =============================================
+    // Firebase REST API — NO SDK NEEDED
+    // =============================================
+    var DB_URL = 'https://batch-party-69ac1-default-rtdb.firebaseio.com';
+    var TICKET_PRICE = 8000;
+    var MAX_TICKETS = 10;
+    var ticketCount = 1;
+    var compressedReceipt = null;
+    var receiptType = null;
+    var receiptFileName = null;
+
+    // =============================================
+    // TICKET COUNTER
+    // =============================================
+    function changeTicketCount(delta) {
+      var newCount = ticketCount + delta;
+      if (newCount < 1 || newCount > MAX_TICKETS) return;
+      ticketCount = newCount;
+      updateCounterUI();
+      renderAttendeeCards();
+    }
+
+    function updateCounterUI() {
+      document.getElementById('counterDisplay').textContent = ticketCount;
+      // Update buttons
+      var minusBtn = document.getElementById('counterMinus');
+      var plusBtn = document.getElementById('counterPlus');
+      if (ticketCount <= 1) { minusBtn.classList.add('disabled'); } else { minusBtn.classList.remove('disabled'); }
+      if (ticketCount >= MAX_TICKETS) { plusBtn.classList.add('disabled'); } else { plusBtn.classList.remove('disabled'); }
+      // Update total
+      document.getElementById('totalAmount').textContent = 'Rs. ' + (ticketCount * TICKET_PRICE).toLocaleString();
+    }
+
+    // =============================================
+    // ATTENDEE CARD RENDERING
+    // =============================================
+    function renderAttendeeCards() {
+      var container = document.getElementById('attendeesContainer');
+      var currentCount = container.querySelectorAll('.attendee-card').length;
+
+      if (ticketCount > currentCount) {
+        // Add new cards
+        for (var i = currentCount + 1; i <= ticketCount; i++) {
+          container.appendChild(createAttendeeCard(i));
+        }
+      } else if (ticketCount < currentCount) {
+        // Remove excess cards from the end
+        var cards = container.querySelectorAll('.attendee-card');
+        for (var i = cards.length - 1; i >= ticketCount; i--) {
+          cards[i].style.animation = 'none';
+          cards[i].style.opacity = '0';
+          cards[i].style.transform = 'translateY(-10px)';
+          cards[i].style.transition = 'all 0.25s ease';
+          (function(card) {
+            setTimeout(function() { card.remove(); }, 250);
+          })(cards[i]);
+        }
+      }
+      if(typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function createAttendeeCard(index) {
+      var card = document.createElement('div');
+      card.className = 'attendee-card';
+      card.setAttribute('data-index', index);
+
+      card.innerHTML =
+        '<div class="attendee-header" onclick="toggleAttendee(this)">' +
+          '<span class="attendee-title"><span class="ticket-icon"><i data-lucide="ticket" style="width:1.1rem;height:1.1rem;"></i></span> Ticket ' + index + '</span>' +
+          '<span class="attendee-name-preview" id="namePreview_' + index + '"></span>' +
+          '<span class="attendee-toggle"><i data-lucide="chevron-down" style="width:.85rem;height:.85rem;"></i></span>' +
+        '</div>' +
+        '<div class="attendee-body">' +
+          '<div class="form-group">' +
+            '<label>Full Name <span class="required">*</span></label>' +
+            '<input type="text" id="name_' + index + '" placeholder="Enter full name" oninput="updateNamePreview(' + index + ')">' +
+            '<span class="field-error" id="nameError_' + index + '"></span>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>WhatsApp Number <span class="required">*</span></label>' +
+            '<input type="tel" id="phone_' + index + '" placeholder="e.g., 0771234567">' +
+            '<span class="field-error" id="phoneError_' + index + '"></span>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>Email <span class="required">*</span></label>' +
+            '<input type="email" id="email_' + index + '" placeholder="your@email.com">' +
+            '<span class="field-error" id="emailError_' + index + '"></span>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>NIC Number <span class="required">*</span></label>' +
+            '<input type="text" id="idNumber_' + index + '" placeholder="NIC Number">' +
+            '<span class="field-error" id="idError_' + index + '"></span>' +
+          '</div>' +
+          '<div class="form-group">' +
+            '<label>O/L or A/L Class <span class="required">*</span></label>' +
+            '<input type="text" id="classInfo_' + index + '" placeholder="e.g., 2023 O/L Science A">' +
+            '<span class="field-error" id="classError_' + index + '"></span>' +
+          '</div>' +
+        '</div>';
+
+      return card;
+    }
+
+    function toggleAttendee(headerEl) {
+      var body = headerEl.nextElementSibling;
+      var toggle = headerEl.querySelector('.attendee-toggle');
+      if (body.classList.contains('collapsed')) {
+        body.classList.remove('collapsed');
+        toggle.classList.remove('collapsed');
+      } else {
+        body.classList.add('collapsed');
+        toggle.classList.add('collapsed');
+      }
+    }
+
+    function updateNamePreview(index) {
+      var nameInput = document.getElementById('name_' + index);
+      var preview = document.getElementById('namePreview_' + index);
+      if (nameInput && preview) {
+        preview.textContent = nameInput.value.trim() || '';
+      }
+    }
+
+    // =============================================
+    // RECEIPT UPLOAD + COMPRESSION (IMAGE OR PDF)
+    // =============================================
+    var uploadArea = document.getElementById('uploadArea');
+    var fileInput = document.getElementById('receiptFile');
+
+    // Drag & drop
+    uploadArea.addEventListener('dragover', function(e) { e.preventDefault(); uploadArea.style.borderColor = 'var(--gold)'; });
+    uploadArea.addEventListener('dragleave', function() { uploadArea.style.borderColor = ''; });
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault(); uploadArea.style.borderColor = '';
+      if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener('change', function() {
+      if (fileInput.files[0]) handleFile(fileInput.files[0]);
+    });
+
+    function handleFile(file) {
+      if (!file) return;
+      var isPdf = (file.type === 'application/pdf') || file.name.toLowerCase().endsWith('.pdf');
+      var isImg = file.type.startsWith('image/');
+
+      if (!isPdf && !isImg) {
+        showError('receiptError', 'Please select an image (JPG, PNG) or PDF document.');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showError('receiptError', 'File must be under 5MB.');
+        return;
+      }
+      clearError('receiptError');
+      uploadArea.classList.remove('upload-error');
+      document.getElementById('fileName').textContent = file.name;
+      receiptFileName = file.name;
+
+      if (isPdf) {
+        // Handle PDF via FileReader as Base64 data URL
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          compressedReceipt = e.target.result;
+          receiptType = 'pdf';
+          document.getElementById('previewImage').style.display = 'none';
+          document.getElementById('previewPdf').style.display = 'block';
+          uploadArea.style.display = 'none';
+          document.getElementById('uploadPreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Compress image: resize to max 800px, JPEG 60% quality
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var img = new Image();
+          img.onload = function() {
+            var canvas = document.createElement('canvas');
+            var w = img.width, h = img.height;
+            if (w > 800) { h = (800 / w) * h; w = 800; }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            compressedReceipt = canvas.toDataURL('image/jpeg', 0.6);
+            receiptType = 'image';
+            document.getElementById('previewImage').src = compressedReceipt;
+            document.getElementById('previewImage').style.display = 'block';
+            document.getElementById('previewPdf').style.display = 'none';
+            uploadArea.style.display = 'none';
+            document.getElementById('uploadPreview').style.display = 'block';
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeReceipt() {
+      compressedReceipt = null;
+      receiptType = null;
+      receiptFileName = null;
+      fileInput.value = '';
+      document.getElementById('previewImage').src = '';
+      document.getElementById('previewImage').style.display = 'none';
+      document.getElementById('previewPdf').style.display = 'none';
+      document.getElementById('uploadPreview').style.display = 'none';
+      uploadArea.style.display = 'block';
+    }
+
+    // =============================================
+    // FORM SUBMISSION
+    // =============================================
+    function submitBooking() {
+      var valid = true;
+      var attendees = [];
+      var firstInvalidEl = null;
+
+      // Validate receipt
+      var uploadEl = document.getElementById('uploadArea');
+      if (!compressedReceipt) {
+        uploadEl.classList.add('upload-error');
+        showError('receiptError', 'Please upload your bank payment receipt before submitting.');
+        valid = false;
+        if (!firstInvalidEl) firstInvalidEl = uploadEl;
+      } else {
+        uploadEl.classList.remove('upload-error');
+        clearError('receiptError');
+      }
+
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      // Validate each attendee
+      for (var i = 1; i <= ticketCount; i++) {
+        var card = document.querySelector('.attendee-card[data-index="' + i + '"]');
+        var cardHasError = false;
+
+        var nameInput = document.getElementById('name_' + i);
+        var phoneInput = document.getElementById('phone_' + i);
+        var emailInput = document.getElementById('email_' + i);
+        var idInput = document.getElementById('idNumber_' + i);
+        var classInput = document.getElementById('classInfo_' + i);
+
+        var name = nameInput ? nameInput.value.trim() : '';
+        var phone = phoneInput ? phoneInput.value.trim() : '';
+        var email = emailInput ? emailInput.value.trim() : '';
+        var idNumber = idInput ? idInput.value.trim() : '';
+        var classInfo = classInput ? classInput.value.trim() : '';
+
+        // Name
+        if (name.length < 2) {
+          setFieldError('name_' + i, 'nameError_' + i, 'Full name is required (at least 2 letters).');
+          valid = false;
+          cardHasError = true;
+          if (!firstInvalidEl) firstInvalidEl = nameInput;
+        } else {
+          clearFieldError('name_' + i, 'nameError_' + i);
+        }
+
+        // WhatsApp
+        if (!/^(07\d{8}|947\d{8}|\+947\d{8})$/.test(phone)) {
+          setFieldError('phone_' + i, 'phoneError_' + i, 'Enter a valid WhatsApp number (e.g. 0771234567).');
+          valid = false;
+          cardHasError = true;
+          if (!firstInvalidEl) firstInvalidEl = phoneInput;
+        } else {
+          clearFieldError('phone_' + i, 'phoneError_' + i);
+        }
+
+        // Email (REQUIRED)
+        if (!email) {
+          setFieldError('email_' + i, 'emailError_' + i, 'Email address is required.');
+          valid = false;
+          cardHasError = true;
+          if (!firstInvalidEl) firstInvalidEl = emailInput;
+        } else if (!emailRegex.test(email)) {
+          setFieldError('email_' + i, 'emailError_' + i, 'Enter a valid email address (e.g. name@domain.com).');
+          valid = false;
+          cardHasError = true;
+          if (!firstInvalidEl) firstInvalidEl = emailInput;
+        } else {
+          clearFieldError('email_' + i, 'emailError_' + i);
+        }
+
+        // ID Number (NIC)
+        if (idNumber.length < 3) {
+          setFieldError('idNumber_' + i, 'idError_' + i, 'NIC number is required.');
+          valid = false;
+          cardHasError = true;
+          if (!firstInvalidEl) firstInvalidEl = idInput;
+        } else {
+          clearFieldError('idNumber_' + i, 'idError_' + i);
+        }
+
+        // Class
+        if (!classInfo) {
+          setFieldError('classInfo_' + i, 'classError_' + i, 'O/L or A/L class is required (e.g. 2026 A/L Science).');
+          valid = false;
+          cardHasError = true;
+          if (!firstInvalidEl) firstInvalidEl = classInput;
+        } else {
+          clearFieldError('classInfo_' + i, 'classError_' + i);
+        }
+
+        // Card visual state & header indicator
+        if (card) {
+          var errorBadge = card.querySelector('.card-error-badge');
+          if (cardHasError) {
+            card.classList.add('has-error');
+            expandAttendee(i);
+            if (!errorBadge) {
+              var badge = document.createElement('span');
+              badge.className = 'card-error-badge';
+              badge.innerHTML = '<i data-lucide="alert-circle" style="width:12px;height:12px;"></i> Fix Required';
+              var header = card.querySelector('.attendee-header');
+              var toggle = header.querySelector('.attendee-toggle');
+              header.insertBefore(badge, toggle);
+              if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+          } else {
+            card.classList.remove('has-error');
+            if (errorBadge) errorBadge.remove();
+          }
+        }
+
+        // Normalize phone
+        var normalizedPhone = phone;
+        if (normalizedPhone.startsWith('+')) normalizedPhone = normalizedPhone.substring(1);
+        if (normalizedPhone.startsWith('0')) normalizedPhone = '94' + normalizedPhone.substring(1);
+
+        attendees.push({
+          name: name,
+          whatsappNumber: normalizedPhone,
+          email: email,
+          idNumber: idNumber,
+          classInfo: classInfo
+        });
+      }
+
+      if (!valid) {
+        if (firstInvalidEl) {
+          firstInvalidEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if (firstInvalidEl.focus && firstInvalidEl.tagName === 'INPUT') {
+            setTimeout(function() { firstInvalidEl.focus(); }, 350);
+          }
+        }
+        showToast('Please fix the highlighted fields shown in red.', 'error');
+        return;
+      }
+
+      var groupRef = 'RED-' + Date.now().toString(36).toUpperCase();
+      var nowIso = new Date().toISOString();
+      var patchData = {};
+
+      if (ticketCount === 1) {
+        patchData[groupRef] = {
+          refId: groupRef,
+          groupRef: groupRef,
+          groupIndex: 1,
+          groupTotal: 1,
+          paidTogether: false,
+          fullName: attendees[0].name,
+          whatsappNumber: attendees[0].whatsappNumber,
+          email: attendees[0].email,
+          idNumber: attendees[0].idNumber,
+          batchClass: attendees[0].classInfo,
+          numTickets: 1,
+          primaryContact: attendees[0].name,
+          primaryPhone: attendees[0].whatsappNumber,
+          receiptImage: compressedReceipt,
+          receiptType: receiptType || 'image',
+          receiptFileName: receiptFileName || 'receipt',
+          status: 'pending',
+          scanned: false,
+          createdAt: nowIso
+        };
+      } else {
+        for (var k = 0; k < attendees.length; k++) {
+          var tKey = groupRef + '-' + (k + 1);
+          patchData[tKey] = {
+            refId: tKey,
+            groupRef: groupRef,
+            groupIndex: k + 1,
+            groupTotal: ticketCount,
+            paidTogether: true,
+            fullName: attendees[k].name,
+            whatsappNumber: attendees[k].whatsappNumber,
+            email: attendees[k].email,
+            idNumber: attendees[k].idNumber,
+            batchClass: attendees[k].classInfo,
+            numTickets: 1,
+            primaryContact: attendees[0].name,
+            primaryPhone: attendees[0].whatsappNumber,
+            receiptImage: compressedReceipt,
+            receiptType: receiptType || 'image',
+            receiptFileName: receiptFileName || 'receipt',
+            status: 'pending',
+            scanned: false,
+            createdAt: nowIso
+          };
+        }
+      }
+
+      // Disable button
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('btnText').style.display = 'none';
+      document.getElementById('btnLoading').style.display = 'inline-flex';
+
+      // PATCH to Firebase REST API
+      var xhr = new XMLHttpRequest();
+      xhr.open('PATCH', DB_URL + '/tickets.json', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          document.getElementById('bookingSection').style.display = 'none';
+          document.getElementById('successRef').innerHTML = groupRef + (ticketCount > 1 ? '<div style="font-size:0.85rem;color:var(--text-muted);margin-top:6px;font-family:var(--font-body);">' + ticketCount + ' Tickets Reserved (Paid Together)</div>' : '');
+          document.getElementById('successState').classList.add('visible');
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+          showToast('Booking submitted for ' + ticketCount + ' ticket(s)!', 'success');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          showToast('Failed to submit. Error: ' + xhr.status, 'error');
+          enableBtn();
+        }
+      };
+
+      xhr.onerror = function() {
+        showToast('Network error. Check your internet connection.', 'error');
+        enableBtn();
+      };
+
+      xhr.send(JSON.stringify(patchData));
+    }
+
+    function expandAttendee(index) {
+      var cards = document.querySelectorAll('.attendee-card');
+      for (var j = 0; j < cards.length; j++) {
+        if (parseInt(cards[j].getAttribute('data-index')) === index) {
+          var body = cards[j].querySelector('.attendee-body');
+          var toggle = cards[j].querySelector('.attendee-toggle');
+          if (body.classList.contains('collapsed')) {
+            body.classList.remove('collapsed');
+            toggle.classList.remove('collapsed');
+          }
+          break;
+        }
+      }
+    }
+
+    function enableBtn() {
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('btnText').style.display = 'inline';
+      document.getElementById('btnLoading').style.display = 'none';
+    }
+
+    function setFieldError(fieldId, errorId, msg) {
+      var inp = document.getElementById(fieldId);
+      var err = document.getElementById(errorId);
+      if (inp) inp.classList.add('input-error');
+      if (err) {
+        err.innerHTML = '<i data-lucide="alert-circle" style="width:13px;height:13px;stroke:currentColor;flex-shrink:0;"></i> ' + msg;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    }
+
+    function clearFieldError(fieldId, errorId) {
+      var inp = document.getElementById(fieldId);
+      var err = document.getElementById(errorId);
+      if (inp) inp.classList.remove('input-error');
+      if (err) err.innerHTML = '';
+    }
+
+    function showError(id, msg) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.innerHTML = '<i data-lucide="alert-circle" style="width:13px;height:13px;stroke:currentColor;flex-shrink:0;"></i> ' + msg;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    }
+
+    function clearError(id) {
+      var el = document.getElementById(id);
+      if (el) el.innerHTML = '';
+    }
+
+    function showToast(message, type) {
+      var c = document.getElementById('toastContainer');
+      var t = document.createElement('div');
+      t.className = 'toast ' + (type || 'error');
+      t.textContent = message;
+      c.appendChild(t);
+      setTimeout(function() { t.classList.add('show'); }, 10);
+      setTimeout(function() { t.classList.remove('show'); setTimeout(function() { t.remove(); }, 300); }, 4000);
+    }
+
+    function resetForm() {
+      ticketCount = 1;
+      updateCounterUI();
+      removeReceipt();
+      document.getElementById('attendeesContainer').innerHTML = '';
+      renderAttendeeCards();
+      document.getElementById('bookingSection').style.display = 'block';
+      document.getElementById('successState').classList.remove('visible');
+      enableBtn();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // =============================================
+    // CLEAR ERRORS ON INPUT (REAL-TIME)
+    // =============================================
+    document.addEventListener('input', function(e) {
+      var input = e.target;
+      if (input.tagName !== 'INPUT') return;
+      var id = input.id;
+      input.classList.remove('input-error');
+
+      // Map input IDs to their error elements
+      if (id.startsWith('name_')) clearFieldError(id, 'nameError_' + id.split('_')[1]);
+      else if (id.startsWith('phone_')) clearFieldError(id, 'phoneError_' + id.split('_')[1]);
+      else if (id.startsWith('email_')) clearFieldError(id, 'emailError_' + id.split('_')[1]);
+      else if (id.startsWith('idNumber_')) clearFieldError(id, 'idError_' + id.split('_')[1]);
+      else if (id.startsWith('classInfo_')) clearFieldError(id, 'classError_' + id.split('_')[1]);
+
+      // Check if all errors in this card are resolved
+      var parts = id.split('_');
+      if (parts.length > 1) {
+        var cardIndex = parts[1];
+        var card = document.querySelector('.attendee-card[data-index="' + cardIndex + '"]');
+        if (card) {
+          var remainingErrors = card.querySelectorAll('.input-error');
+          if (remainingErrors.length === 0) {
+            card.classList.remove('has-error');
+            var badge = card.querySelector('.card-error-badge');
+            if (badge) badge.remove();
+          }
+        }
+      }
+    });
+
+    // =============================================
+    // INITIALIZE: render 1 attendee card on load & 3D tilt
+    // =============================================
+    renderAttendeeCards();
+    if(typeof lucide !== 'undefined') lucide.createIcons();
+
+    // 3D Parallax Tilt Effect on Title
+    (function() {
+      var stage = document.getElementById('titleStage');
+      var card = document.getElementById('titleCard');
+      if (!stage || !card) return;
+
+      var isHovered = false;
+      stage.addEventListener('mouseenter', function() { isHovered = true; });
+      stage.addEventListener('mousemove', function(e) {
+        if (!isHovered) return;
+        var rect = stage.getBoundingClientRect();
+        var x = e.clientX - rect.left - rect.width / 2;
+        var y = e.clientY - rect.top - rect.height / 2;
+        var rotX = (y / (rect.height / 2)) * -7;
+        var rotY = (x / (rect.width / 2)) * 9;
+        card.style.transform = 'perspective(900px) rotateX(' + rotX.toFixed(2) + 'deg) rotateY(' + rotY.toFixed(2) + 'deg) scale3d(1.025, 1.025, 1.025)';
+      });
+      stage.addEventListener('mouseleave', function() {
+        isHovered = false;
+        card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      });
+    })();
+  </script>
+</body>
+</html>
